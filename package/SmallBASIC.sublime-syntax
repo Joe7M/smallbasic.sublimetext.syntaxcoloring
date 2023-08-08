@@ -1,0 +1,138 @@
+%YAML 1.2
+---
+# Syntax highlighting for SmallBASIC 
+# www.sublimetext.com/docs/3/syntax.html 
+# www.sublimetext.com/docs/scope_naming.html
+
+
+name: SmallBASIC
+file_extensions:
+  - bas
+scope: source.SmallBASIC
+
+variables:
+  identifier: \b[[:alpha:]_][[:alnum:]_]*\b
+  dec_exponent: (?:[Ee][-+]?\d*)
+contexts:
+  main:
+    - include: comments
+    - include: expressions
+
+    - match: 'label [0-9A-Za-z_-]*'
+      scope: entity.name.function.line-number.SmallBASIC
+   
+    - match: '\b(?i:CONST|LOCAL|BYREF|DIM|REDIM)\b'
+      scope: storage.type.SmallBASIC
+
+    # function and subroutine definition
+    - match: '\b(?i:FUNC|SUB)\b\s*({{identifier}})\b'
+      captures:
+        0: punctuation.section.group.begin.SmallBASIC
+        1: entity.name.function.SmallBASIC
+      push:
+        - meta_content_scope: meta.function.SmallBASIC 
+        - include: main        
+        - match: '\b(?i:END|END FUNC|END SUB)\b'
+          scope: punctuation.section.group.end.SmallBASIC
+          pop: true
+
+    - match: '\b(?i:FOR|NEXT|EXIT|WHILE|WEND|REPEAT|UNTIL|STEP|TO)\b'
+      scope: keyword.control.loop.SmallBASIC
+
+    - match: '\b(?i:GOTO|GOSUB|RETURN|FUNC|SUB)\b'
+      scope: keyword.control.flow.SmallBASIC
+
+    - match: '\b(?i:IF|THEN|ELSE|ELSEIF|ELIF|END IF|ENDIF|IF|SELECT|END SELECT|CASE|IFF)\b'
+      scope: keyword.control.conditional.SmallBASIC
+
+    - match: '(?i)\b(AS|CATCH|DATA|DECLARE|DEF|DEFINEKEY|DO|TRY|END TRY|FILLED|IN|LET|LIKE|ON|SELF|THROW|TRY|USE|USG|USING|ABS|ABSMAX|ABSMIN|ACCESS|ACOS|ACOSH|ACOT|ACOTH|ACSC|ACSCH|APPEND|ARC|ARRAY|ASC|ASEC|ASECH|ASIN|ASINH|AT|ATAN|ATAN2|ATANH|ATN|BCS|BEEP|BG|BGETC|BIN|BLOAD|BPUTC|BSAVE|CALL|CAT|CBS|CDBL|CEIL|CHAIN|CHART|CHDIR|CHMOD|CHOP|CHR|CINT|CIRCLE|CLOSE|CLS|COLOR|COMMAND|COPY|COS|COSH|COT|COTH|CREAL|CSC|CSCH|CWD|DATE|DATEDMY|DATEFMT|DEG|DELAY|DELETE|DERIV|DETERM|DIFFEQN|DIRWALK|DISCLOSE|DRAW|DRAWPOLY|EMPTY|ENCLOSE|ENV|EOF|ERASE|EXEC|EXIST|EXIT|EXP|EXPRSEQ|FILES|FIX|FLOOR|FORM|FORMAT|FRAC|FRE|FREEFILE|HEX|HOME|IMAGE|INKEY|INPUT|INSERT|INSTR|INT|INTERSECT|INVERSE|ISARRAY|ISDIR|ISFILE|ISLINK|ISMAP|ISNUMBER|ISSTRING|JOIN|JULIAN|KILL|LBOUND|LCASE|LEFT|LEFTOF|LEFTOFLAST|LEN|LINE|LINEINPUT|LINEQN|LINPUT|LOCATE|LOCK|LOF|LOG|LOG10|LOGPRINT|LOWER|LTRIM|M3APPLY|M3IDENT|M3ROTATE|M3SCALE|M3TRANS|MAX|MID|MIN|MKDIR|NOSOUND|OCT|OPEN|PAINT|PAUSE|PEN|PLAY|PLOT|POINT|POLYAREA|POLYCENT|POLYEXT|POW|PRINT|PROGLINE|PSET|PTDISTLN|PTDISTSEG|PTSIGN|RAD|RANDOMIZE|READ|RECT|RENAME|REPLACE|RESTORE|RETURN|RGB|RGBF|RIGHT|RIGHTOF|RIGHTOFLAST|RINSTR|RMDIR|RND|ROOT|ROUND|RTRIM|RUN|SBVER|SEARCH|SEC|SECH|SEEK|SEGCOS|SEGLEN|SEGSIN|SEQ|SGN|SHOWPAGE|SIN|SINH|SINPUT|SORT|SOUND|SPACE|SPC|SPLIT|SPRINT|SQR|SQUEEZE|STATMEAN|STATMEANDEV|STATSPREADP|STATSPREADS|STKDUMP|STOP|STR|STRING|SUM|SUMSQ|SWAP|TAB|TAN|TANH|TEXTHEIGHT|TEXTWIDTH|TICKS|TIME|TIMEHMS|TIMER|TIMESTAMP|TLOAD|TRANSLATE|TRIM|TROFF|TRON|TSAVE|TXTH|TXTW|UBOUND|UCASE|UPPER|VAL|VIEW|WEEKDAY|WINDOW|WRITE)\b'
+      scope: keyword.control.SmallBASIC    
+
+    - match: '(?i)\b(FALSE|MAXINT|NIL|PI|TRUE|XMAX|XPOS|YMAX|YPOS)\b'
+      scope: constant.numeric.smallbasic
+
+    - match: '\b(?i:CHR|INKEY|STR)|\b(?i:ABS|ACS|ASN|ATN|CAST|CHR|CODE|COS|EXP|IN|INKEY|INPUT|INT|LBOUND|LEN|LN|PEEK|SCREEN|SGN|SIN|SQR|STR|TAN|UBOUND|VAL)\b'
+      scope: support.function.SmallBASIC
+
+    - match: '\b(?i:AND|BAND|BOR|EQV|IMP|MOD|NAND|NOR|NOT|LSHIFT|MDL|OR|RSHIFT|XNOR|XOR|<<|>>)\b'
+      scope: keyword.operator.SmallBASIC
+
+    - match: '(?i)\b(EXPORT|IMPORT|INCLUDE|OPTION|UNIT)\b'
+      scope: meta.preprocessor
+
+    # function or sub call
+    - match: (?={{identifier}}\s*\()
+      push:
+        - meta_content_scope: meta.function-call.SmallBASIC
+        
+        - match: '(?!\b[A-Z]+\b){{identifier}}' #exclude identifiers in all caps which are likely to be BASIC native functions
+          scope: variable.function.SmallBASIC
+        
+        - match: '\('
+          scope: meta.group.SmallBASIC punctuation.section.group.begin.SmallBASIC
+          set:
+            - include: main 
+            - meta_content_scope: meta.function-call.SmallBASIC meta.group.SmallBASIC
+            
+            - match : \)
+              scope: meta.function-call.SmallBASIC meta.group.SmallBASIC punctuation.section.group.end.SmallBASIC
+              pop: true
+
+  expressions:
+    - include: strings
+
+    - match: '(0[bB][0-1]+|\b[0-1]+b)\b'
+      scope: constant.numeric.integer.binary.SmallBASIC
+
+    - match: '(0[oO][0-7]+|\b[0-7]+b)\b'
+      scope: constant.numeric.integer.octal.SmallBASIC
+   
+    - match: '(0[xX][A-Fa-f0-9]+|\b[A-Fa-f0-9]+h)\b'
+      scope: constant.numeric.integer.hexadecimal.SmallBASIC
+
+    - match: '\b([0-9]+|\b[0-9])\b'
+      scope: constant.numeric.integer.SmallBASIC
+  
+    - match: '\d+(?:(\.)\d*{{dec_exponent}}?|{{dec_exponent}})|(\.)\d+{{dec_exponent}}?'
+      scope: constant.numeric.SmallBASIC
+
+    - match: '<\=|>\=|<|>|==|!='
+      scope: keyword.operator.comparison.SmallBASIC
+
+    - match: '\+|\-|\*|/|<<|>>|\^|~|\b(?i:MOD)\b'
+      scope: keyword.operator.arithmetic.SmallBASIC
+
+    - match: '@'
+      scope: keyword.operator.SmallBASIC
+
+    - match: '\='
+      scope: keyword.operator.assignment.SmallBASIC
+
+    - match: '$'
+      scope: punctuation.separator.continuation.SmallBASIC
+
+    - match: ':|,|;|'''
+      scope: punctuation.separator.SmallBASIC
+
+  strings:
+    - match: '"'
+      scope: punctuation.definition.string.begin.SmallBASIC
+      push:
+        - meta_scope: string.quoted.double.SmallBASIC
+        
+        # escape characters
+        - match: '\\.'
+          scope: constant.character.escape.SmallBASIC
+
+        - match: '"'
+          scope: punctuation.definition.string.end.SmallBASIC
+          pop: true
+  
+  comments:
+    - match: '''|\b(?i)REM\b|^#'
+      scope: punctuation.definition.comment.SmallBASIC
+      push:
+        - meta_scope: comment.line.SmallBASIC
+        - match: $
+          pop: true
+

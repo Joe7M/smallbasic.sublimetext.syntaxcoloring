@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plist version="1.0">
+	<dict>
+		<key>scope</key>
+		<string>source.SmallBASIC - comment - string</string>
+		<key>settings</key>
+		<dict>
+			<key>decreaseIndentPattern</key>
+			<string>(^\s*\b(elseif|else|fi|end|until|next|wend)\b.*$|^((?!\{).)*\}\;?.*$)</string>
+			<key>increaseIndentPattern</key>
+			<string>(^\s*\b(((local)?[\s\w=]+)?func|sub|repeat|for|else|elseif|if|while)\b((?!\bend\b).)*$|^.*\b(then)\b((?!\bend\b).)*$|^.*\{((?!\}).)*$)</string>
+		</dict>
+	</dict>
+</plist> 
