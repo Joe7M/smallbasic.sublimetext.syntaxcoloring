@@ -1,0 +1,4 @@
+{
+	"cmd": ["cmd", "/c", "sbasicg", "-r", "$file"],
+	"selector": "source.SmallBASIC"
+}
